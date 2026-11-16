@@ -77,21 +77,6 @@ async function enrich(sessions: SessionRow[]): Promise<SessionWithPlayers[]> {
   if (waitError) throw waitError;
   const waitRows = (waiting ?? []) as { session_id: string; user_id: string }[];
 
-  const signupBySession = new Map<string, { session_id: string; user_id: string }[]>();
-  const waitlistBySession = new Map<string, { session_id: string; user_id: string }[]>();
-
-  for (const row of rows) {
-    const sessionRows = signupBySession.get(row.session_id) ?? [];
-    sessionRows.push(row);
-    signupBySession.set(row.session_id, sessionRows);
-  }
-
-  for (const row of waitRows) {
-    const sessionRows = waitlistBySession.get(row.session_id) ?? [];
-    sessionRows.push(row);
-    waitlistBySession.set(row.session_id, sessionRows);
-  }
-
   const profiles = await loadProfiles([
     ...rows.map((r) => r.user_id),
     ...waitRows.map((r) => r.user_id),
@@ -99,19 +84,20 @@ async function enrich(sessions: SessionRow[]): Promise<SessionWithPlayers[]> {
   ]);
 
   return sessions.map((session) => {
-    const players = (signupBySession.get(session.id) ?? [])
+    const players = rows
+      .filter((r) => r.session_id === session.id)
       .map((r) => profiles.get(r.user_id))
       .filter((p): p is Profile => Boolean(p));
-    const waitlist = (waitlistBySession.get(session.id) ?? [])
+    const waitlist = waitRows
+      .filter((r) => r.session_id === session.id)
       .map((r) => profiles.get(r.user_id))
       .filter((p): p is Profile => Boolean(p));
-
     return {
       ...session,
       organizer: profiles.get(session.organizer_id) ?? null,
       players,
       waitlist,
-      count: players.length,
+      count: rows.filter((r) => r.session_id === session.id).length,
     };
   });
 }
