@@ -1,0 +1,10 @@
+REVOKE EXECUTE ON FUNCTION public.is_space_member(uuid, uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.is_space_admin(uuid, uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.shares_space_with(uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.session_in_my_space(uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.generate_invite_code() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.create_space(text, text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.join_space_by_code(text) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.regenerate_invite_code(uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.accept_pending_invites() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.space_add_creator() FROM anon, authenticated;

@@ -1,0 +1,1 @@
+REVOKE ALL ON public.spaces, public.space_members, public.space_invites, public.game_sessions, public.session_signups, public.session_waitlist, public.profiles FROM anon;
